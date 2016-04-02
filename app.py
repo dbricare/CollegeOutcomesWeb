@@ -6,7 +6,6 @@ import os, datetime
 
 app = Flask(__name__)
 
-
 # flask page functions
 @app.route('/')
 def main():
