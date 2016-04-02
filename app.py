@@ -15,11 +15,7 @@ def main():
 @app.route('/rankings')
 def rankings():
     return render_template('rankings.html')
-    
-# @app.route('/postmethod', methods = ['POST'])
-# def get_post_javascript_data():
-#     jsdata = request.form['javascript_data']
-#     return jsdata
+
 
 @app.route('/index', methods=['GET', 'POST'])
 def index(): 
@@ -62,11 +58,10 @@ def index():
     # modification date
     t = os.path.getmtime('app.py')
     modt=datetime.date.fromtimestamp(t)
-#     updated='{modt:%B} {modt.day}, {modt:%Y}'.format(modt)  
     updated = modt.strftime('%B %d, %Y')
 
     return render_template('index.html', updated=updated, dfs=dfs,
                             earnings=earntarget, tuition=tuitiontarget, viewsize=nn)
 
 if __name__ == "__main__":
-    app.run(port=33507)
+    app.run(debug=True, port=33507)
