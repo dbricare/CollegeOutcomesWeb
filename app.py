@@ -20,6 +20,8 @@ def rankings():
 @app.route('/index', methods=['GET', 'POST'])
 def index(): 
 
+    relpath = '/Users/dbricare/Documents/Programming/CollegeOutcomesWeb/'
+
     def knnestimate(df, earn, tuition, nn=5):
         # df must have column order: institution, state, tuition, 50% earnings, 75% earnings, 90% earnings
         cols = df.columns
@@ -27,7 +29,7 @@ def index():
         dfs = {}
         for percent, col in zip(['50%', '25%', '10%'], cols[3:]):
             X = df[['PublicPrivate', col]]
-            with open(col+'.pkl', 'rb') as f:
+            with open(relpath+col+'.pkl', 'rb') as f:
                 knn = pickle.load(f)
                 _ , idxs = knn.kneighbors(xtest, nn)
             outcols = list(cols[:3])
@@ -41,7 +43,7 @@ def index():
             dfs[percent] = testhtml
         return dfs
 
-    data = pd.read_csv('EarningsTuition.csv', sep=',')
+    data = pd.read_csv(relpath+'EarningsTuition.csv', sep=',')
 
     if request.method=='GET':
         earntarget = 60000
@@ -56,7 +58,7 @@ def index():
     dfs = knnestimate(data, earntarget, tuitiontarget, nn)
 
     # modification date
-    t = os.path.getmtime('app.py')
+    t = os.path.getmtime(relpath+'app.py')
     modt=datetime.date.fromtimestamp(t)
     updated = modt.strftime('%B %d, %Y')
 
