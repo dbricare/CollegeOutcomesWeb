@@ -30,7 +30,7 @@ def index():
             X = df[['PublicPrivate', col]]
             with open(relpath+col+'.pkl', 'rb') as f:
                 knn = pickle.load(f)
-                _ , idxs = knn.kneighbors(xtest, nn)
+            _ , idxs = knn.kneighbors(xtest, nn)
             outcols = list(cols[:3])
             outcols.append(col)
             dfres = df[outcols].iloc[idxs.flatten()].copy()
