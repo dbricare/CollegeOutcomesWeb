@@ -59,7 +59,7 @@ def index():
     # modification date
     t = os.path.getmtime(relpath+'app.py')
     modt=datetime.date.fromtimestamp(t)
-    updated = modt.strftime('%B %d, %Y')
+    updated = modt.strftime('%B %e, %Y')
 
     return render_template('index.html', updated=updated, dfs=dfs,
                             earnings=earntarget, tuition=tuitiontarget, viewsize=nn)
