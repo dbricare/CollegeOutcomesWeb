@@ -47,7 +47,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="{{ url_for('index') }}">Earnings</a>
+                        <a href="{{ url_for('earncost') }}">Earnings</a>
                     </li>
                     <li>
                         <a href="{{ url_for('rankings') }}">Rankings</a>
@@ -455,7 +455,7 @@
             </div>
 
             <div class="col-sm-3 col-xs-6">
-                <a href="{{ url_for('index') }}">U.S. University <br>Cost and Alumni Earnings</a>
+                <a href="{{ url_for('earncost') }}">U.S. University <br>Cost and Alumni Earnings</a>
             </div>
             <div class="col-sm-3 col-xs-6">
                 <a href="{{ url_for('rankings') }}">U.S. University <br>Foreign Rankings</a>
@@ -470,7 +470,7 @@
         <footer>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Last Updated: March 31, 2016</p>
+                    <p>{{ updated }}</p>
                 </div>
             </div>
             <!-- /.row -->

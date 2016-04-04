@@ -18,7 +18,6 @@
     <!-- Custom CSS -->
     <link href="{{ url_for('static',filename='css/portfolio-item.css') }}" 
     rel="stylesheet">
-<!--     <link href="{{ url_for('static',filename='css/d3.slider.css') }}" rel="stylesheet"> -->
 
     <!-- Custom Fonts -->    
 
@@ -51,7 +50,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="{{ url_for('index') }}">Earnings</a>
+                        <a href="{{ url_for('earncost') }}">Earnings</a>
                     </li>
                     <li>
                         <a href="{{ url_for('rankings') }}">Rankings</a>
@@ -70,7 +69,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">U.S. College Outcomes
-                    <small>mid-career earnings</small>
+                    <small>Potential earnings 10 years after graduation</small>
                 </h1>
             </div>
         </div>
@@ -79,12 +78,12 @@
         <!-- Portfolio Item Row -->
         <div class="row">
             <div class="col-md-8">
-              <p class="text-center"><i>Click on the the title to collapse/expand the panels.</i><p>
+              <p class="text-center"><i>Click on title to collapse/expand the panels.</i><p>
                 <div class="panel-group">
                   <div class="panel panel-danger">
                     <div class="panel-heading">
                       <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#collapse1">10% odds of earning ${{ earnings }}/year</a>
+                        <a data-toggle="collapse" href="#collapse1">10% chance of earning ${{ earnings }}/year</a>
                       </h4>
                     </div>
                     <div id="collapse1" class="panel-collapse collapse in">
@@ -96,7 +95,7 @@
                   <div class="panel panel-warning">
                     <div class="panel-heading">
                       <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#collapse2">25% odds of earning ${{ earnings }}/year</a>
+                        <a data-toggle="collapse" href="#collapse2">25% chance of earning ${{ earnings }}/year</a>
                       </h4>
                     </div>
                     <div id="collapse2" class="panel-collapse collapse in">
@@ -108,7 +107,7 @@
                   <div class="panel panel-success">
                     <div class="panel-heading">
                       <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#collapse3">50% odds of earning ${{ earnings }}/year</a>
+                        <a data-toggle="collapse" href="#collapse3">50% chance of earning ${{ earnings }}/year</a>
                       </h4>
                     </div>
                     <div id="collapse3" class="panel-collapse collapse in">
@@ -123,18 +122,17 @@
 
             <div class="col-md-4">
                 <h3>Project Description</h3>
-                <p>Ideally, prospective students would like to maximize their earnings for their chosen tuition price range. There are two important factors to consider, first the dollar amount they can expect to earn and second how likely they are to meet that dollar amount.</p><p>Additional analysis has shown <b><i>alumni earnings</i></b> have a moderate positive correlation with university tuition. See the project details section for more information.</p>
+                <p>Prospective students who would like to maximize their potential earnings for a given tuition fee must not only consider the dollar amount, but also how likely they are to meet that goal.</p><p>Reported here are the closest matches for alumni earnings and  current tuition as calculated by a nearest neighbor algorithm based on euclidean distance.</p>
                 <h3>Project Details</h3>
                 <ul>
                     <li><h4>Full project analysis on <a href="http://github.com/dbricare/CollegeOutcomes">GitHub</a></h4></li>
                     <li>Tools used include PostgreSQL, Python (<a href="http://www.sqlalchemy.org/">sqlalchemy</a>, <a href="http://pandas.pydata.org">pandas</a>) libraries</li>
-                    <li>Data is from the US Dept. of Education <a href="https://collegescorecard.ed.gov/data/">College Scorecard</a></li>
-                    <li>Data spans years from 1996 to 2015</li>
+                    <li>Data is from US Dept. of Education <a href="https://collegescorecard.ed.gov/data/">College Scorecard</a> and spans years from 1996 to 2015</li>
                 </ul>
                 <hr>
                 <p><b><i>Use the controls below to see which schools match the desired    
                 annual tuition and alumni earnings.</i></b></p>
-                <form role="form" method="post" action="index">
+                <form role="form" method="post" action="earncost">
                 <div class="form-group">
                   <label for="earn">Desired Earnings ($/year): </label>
                   <input type="number" name="earnings" min="10000" max="200000" id="earn"
@@ -147,7 +145,7 @@
                 </div>
                 <div class="form-group">
                   <label for="schools">Number of schools: </label>
-                  <input type="number" name="viewsize" min="5" max="20" 
+                  <input type="number" name="viewsize" min="3" max="20" 
                   value="{{ viewsize }}" class="form-control" id="schools">
                 </div>
                 <div class="form-group text-center">
@@ -166,7 +164,7 @@
                 <h3 class="page-header">Related Projects</h3>
             </div>
             <div class="col-sm-3 col-xs-6">
-                <a href="{{ url_for('index') }}">U.S. University <br>Cost and Alumni Earnings</a>
+                <a href="{{ url_for('earncost') }}">U.S. University <br>Cost and Alumni Earnings</a>
             </div>
             <div class="col-sm-3 col-xs-6">
                 <a href="{{ url_for('rankings') }}">U.S. University <br>Foreign Rankings</a>
@@ -180,7 +178,7 @@
         <footer>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Last Updated: {{ updated }}</p>
+                    <p>{{ updated }}</p>
                 </div>
             </div>
             <!-- /.row -->
@@ -195,10 +193,7 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
     
-    <!-- JavaScript for d3 and slider -->
-    <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src="{{ url_for('static',filename='js/d3.slider.js') }}"></script>
-    
+   
     <!-- JavaScript -->
     <script type="text/javascript">
        // jQuery for bootstrap popover function

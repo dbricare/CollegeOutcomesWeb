@@ -1,49 +1,41 @@
 from flask import Flask, render_template, request, redirect
 import numpy as np
 import pandas as pd
-import dill as pickle
 import os, datetime
 
+# load data
+# df must have column order: institution, state, tuition, 50% earnings, 75% earnings, 90% earnings
+df = pd.read_csv('EarningsTuition.csv', sep=',', encoding='utf-8')
+# instantiate app
 app = Flask(__name__)
+
+# other functions
+def moddate():
+    t = os.path.getmtime('app.py')
+    modt=datetime.date.fromtimestamp(t)
+    return 'Last updated: '+modt.strftime('%B %e, %Y')
+
+def nncalc(outcols, earn, tuition, nn):
+    # sort by minimal distance between target and each column and output those indices
+    X = df[outcols].copy()
+    X['euclid'] = np.sqrt(np.square(X['PublicPrivate']-tuition) + np.square(X[outcols[-1]]-earn))
+    X.sort_values('euclid', inplace=True, ascending=True)
+    X.drop('euclid', axis=1, inplace=True)
+    return X.iloc[:nn]
 
 # flask page functions
 @app.route('/')
 def main():
-    return redirect('/index')
+    return redirect('/earncost')
     
 @app.route('/rankings')
 def rankings():
-    return render_template('rankings.html')
+    # modification date
+    updated = moddate()
+    return render_template('rankings.html', updated=updated)
 
-
-@app.route('/index', methods=['GET', 'POST'])
-def index(): 
-
-    relpath = '/Users/dbricare/Documents/Programming/CollegeOutcomesWeb/'
-
-    def knnestimate(df, earn, tuition, nn=5):
-        # df must have column order: institution, state, tuition, 50% earnings, 75% earnings, 90% earnings
-        cols = df.columns
-        xtest = np.array([tuition, earn]).reshape(1,-1)
-        dfs = {}
-        for percent, col in zip(['50%', '25%', '10%'], cols[3:]):
-            X = df[['PublicPrivate', col]]
-            with open(relpath+col+'.pkl', 'rb') as f:
-                knn = pickle.load(f)
-            _ , idxs = knn.kneighbors(xtest, nn)
-            outcols = list(cols[:3])
-            outcols.append(col)
-            dfres = df[outcols].iloc[idxs.flatten()].copy()
-            dfres.sort_values(cols[2], inplace=True, ascending=True)
-            dfres.columns = ['Institution', 'State', 'Tutition ($)', 'Earnings ($)']
-            testhtml = dfres.to_html(index=False, classes='table table-condensed table-striped table-bordered')
-            testhtml = testhtml.replace('border="1" ', '').replace('class="dataframe ', 'class="')
-            testhtml = testhtml.replace(' style="text-align: right;"', '')
-            dfs[percent] = testhtml
-        return dfs
-
-    data = pd.read_csv(relpath+'EarningsTuition.csv', sep=',')
-
+@app.route('/earncost', methods=['GET', 'POST'])
+def earncost(): 
     if request.method=='GET':
         earntarget = 60000
         tuitiontarget = 10000
@@ -52,16 +44,26 @@ def index():
         earntarget = int(request.form['earnings'])
         tuitiontarget = int(request.form['tuition'])
         nn = int(request.form['viewsize'])
-
     # run function to get tables
-    dfs = knnestimate(data, earntarget, tuitiontarget, nn)
+    cols = df.columns
+    dfs = {}
+    for percent, col in zip(['50%', '25%', '10%'], cols[3:]):
+        outcols = list(cols[:3])
+        outcols.append(col) # inst, state, tuition, earnings
+        dfres = nncalc(outcols, earntarget, tuitiontarget, nn)
+        dfres.columns = ['Institution', 'State', 'Annual Tuition', 'Reported Earnings']
+        dfres.sort_values('Annual Tuition', inplace=True, ascending=True)
+        with pd.option_context('max_colwidth', -1):
+            testhtml = dfres.to_html(index=False, escape=False, 
+            classes='table table-condensed table-striped table-bordered')
+        testhtml = testhtml.replace('border="1" ', '').replace('class="dataframe ', 'class="')
+        testhtml = testhtml.replace(' style="text-align: right;"', '').replace('&', '&amp;')
+        dfs[percent] = testhtml
 
     # modification date
-    t = os.path.getmtime(relpath+'app.py')
-    modt=datetime.date.fromtimestamp(t)
-    updated = modt.strftime('%B %e, %Y')
+    updated = moddate()
 
-    return render_template('index.html', updated=updated, dfs=dfs,
+    return render_template('earncost.html', updated=updated, dfs=dfs,
                             earnings=earntarget, tuition=tuitiontarget, viewsize=nn)
 
 if __name__ == "__main__":
